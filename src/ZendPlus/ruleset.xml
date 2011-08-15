@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="ZendPlus">
+	<description>An extension of Zend coding standard with more strict rules.</description>
+
+	<!-- Include all sniffs in the PEAR standard. Note that the path to the 
+		standard does not have to be specified as the PEAR standard exists inside 
+		the PHP_CodeSniffer install directory. -->
+	<rule ref="Zend" />	
+		
+	<!-- PEAR.Functions.FunctionCallSignature.CloseBracketLine is overriden by
+		 ZendPlus.Functions.FunctionCallSignature.CloseBracketLine and handles multiple closing
+		 parentheses inside a function call correctly -->
+	<rule ref="PEAR.Functions.FunctionCallSignature.CloseBracketLine"> 
+		<severity>0</severity>
+	</rule>
+	
+	<!-- If you want to completely disable an error message in a sniff but you 
+		don't want to exclude the whole sniff, you can change the severity of the 
+		message to 0. -->	
+	<rule ref="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket">
+		<severity>0</severity>
+	</rule>
+</ruleset>

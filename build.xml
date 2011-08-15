@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+
+<project name="CodeSniffer_ZendPlus" default="build" basedir=".">
+    <taskdef classname="phing.tasks.ext.d51PearPkg2Task" name="d51pearpkg2" />
+
+    <property file="build.properties" />
+
+    <!--
+        Fileset for the sources of the Doctrine ORM.
+    -->
+    <fileset id="zendplus-sources" dir="./src">
+        <include name="**"/>
+    </fileset>
+    <!--
+        Clean the directory for the next build.
+    -->
+	<target name="clean">
+		<available file="./build.properties" property="build_properties_exist" value="true" />
+		<fail unless="build_properties_exist" message="The build.properties file is missing." />
+		<delete dir="${build.dir}" includeemptydirs="true" />
+		<delete dir="${dist.dir}" includeemptydirs="true" />
+		<delete dir="${report.dir}" includeemptydirs="true" />
+	</target>
+
+    <!--
+        Prepare the new build directories after cleaning
+    -->
+    <target name="prepare" depends="clean">
+        <echo msg="Creating build directory: ${build.dir}" />
+        <mkdir dir="${build.dir}" />
+        <echo msg="Creating distribution directory: ${dist.dir}" />
+        <mkdir dir="${dist.dir}" />
+        <echo msg="Creating report directory: ${report.dir}" />
+        <mkdir dir="${report.dir}" />
+        <mkdir dir="${build.dir}/logs"/>
+        <mkdir dir="${report.dir}/tests"/>
+    </target>
+
+   <target name="build-zendplus" depends="prepare">
+        <copy todir="${build.dir}/zendplus">
+            <fileset refid="zendplus-sources"/>
+        </copy>
+    </target>
+
+    <target name="build" depends="build-zendplus"/>
+
+    <!--
+        Builds distributable PEAR packages.
+    -->
+    <target name="build-package" depends="build-zendplus">
+        <d51pearpkg2 baseinstalldir="/PHP/CodeSniffer/Standards" dir="${build.dir}/zendplus">
+           <name>CodeSniffer_ZendPlus</name>
+           <summary>CodeSniffer ZendPlus coding standard ruleset.</summary>
+           <channel>pear.systemlab.ru</channel>
+           <description>CodeSniffer ZendPlus coding standard ruleset.</description>
+           <lead user="dotsent" name="Dotsent" email="dotsent@uralweb.ru" />
+           <license>EULA</license>
+           <version release="${version}" api="${version}" />
+           <stability release="${stability}" api="${stability}" />
+           <notes>-</notes>
+           <dirroles key="ZendPlus">php</dirroles>
+           <dependencies>
+               <php minimum_version="5.2.0" />
+               <pear minimum_version="1.6.0" recommended_version="1.6.1" />
+           </dependencies>
+        </d51pearpkg2>
+        <exec command="pear package" dir="${build.dir}/zendplus" passthru="true" />
+        <exec command="mv CodeSniffer_ZendPlus-${version}.tgz ../../dist" dir="${build.dir}/zendplus" passthru="true" />
+    </target>
+</project>
+
